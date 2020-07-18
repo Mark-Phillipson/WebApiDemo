@@ -1,10 +1,11 @@
 @page "/fetchdata"
 @using BlazorApp2.Shared
+@using BlazorApp2.Client.UIThemeClasses
 @inject HttpClient Http
 
 <h1>Weather forecast</h1>
 <h3>@Result</h3>
-<button @onclick="CallWebApi">Test Calling Web API</button>
+<button class="btn @ThemeInfo.ButtonClass" @onclick="CallWebApi">Test Calling Web API</button>
 <p>This component demonstrates fetching data from the server.</p>
 
 @if (forecasts == null)
@@ -13,42 +14,44 @@
 }
 else
 {
-    <table class="table">
-        <thead>
+<table class="table table-bordered table-striped" id="table1">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Temp. (C)</th>
+            <th>Temp. (F)</th>
+            <th>Summary</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var forecast in forecasts)
+        {
             <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
+                <td>@forecast.Date.ToShortDateString()</td>
+                <td>@forecast.TemperatureC</td>
+                <td>@forecast.TemperatureF</td>
+                <td>@forecast.Summary</td>
             </tr>
-        </thead>
-        <tbody>
-            @foreach (var forecast in forecasts)
-            {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+        }
+    </tbody>
+</table>
 }
 
 @code {
     private WeatherForecast[] forecasts;
-    string Result { get; set; }
-    string argument = "what is the weather?";
+    [CascadingParameter]
+    protected ThemeInfo ThemeInfo { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("WeatherForecast");
     }
 
+    string Result { get; set; }
+    string argument = "what is the weather?";
+
     async Task CallWebApi()
     {
-        //Result = await Http.GetFromJsonAsync<string>($"WeatherForecast/{argument}");
         Result = await Http.GetStringAsync($"WeatherForecast/{argument}");
     }
 }

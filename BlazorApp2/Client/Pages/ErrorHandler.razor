@@ -1,0 +1,38 @@
+﻿@page "/errorhandler"
+@using BlazorApp2.Client.UIThemeClasses
+
+<h1>Test raising an exception</h1>
+
+<p>Current count: @currentCount</p>
+<p>Exception Details: @ErrorMessage @StackTrace</p>
+
+
+<p>
+    <button class="btn @ThemeInfo.ButtonClass" @onclick="IncrementCount">
+        Deliberately Cause Exception
+    </button>
+</p>
+@code {
+    private int currentCount = 0;
+    public string StackTrace { get; set; }
+    public string ErrorMessage { get; set; }
+
+    [CascadingParameter]
+    protected ThemeInfo ThemeInfo { get; set; }
+
+    private void IncrementCount()
+    {
+        currentCount++;
+        ThemeInfo.ButtonClass = "btn-danger";
+        // This will raise an exception
+        try
+        {
+            currentCount=currentCount / 0;
+        }
+        catch (Exception exception)
+        {
+            StackTrace = exception.StackTrace;
+            ErrorMessage = exception.Message;
+        }
+    }
+}

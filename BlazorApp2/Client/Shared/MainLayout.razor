@@ -1,5 +1,5 @@
 ﻿@inherits LayoutComponentBase
-
+@using BlazorApp2.Client.UIThemeClasses
 <div class="sidebar">
     <NavMenu />
 </div>
@@ -9,7 +9,14 @@
         <a href="http://blazor.net" target="_blank" class="ml-md-auto">About</a>
     </div>
 
-    <div class="content px-4">
-        @Body
-    </div>
+    <CascadingValue Value="theme">
+            <div class="content px-4">
+                @Body
+            </div>
+    </CascadingValue>
 </div>
+
+
+@code {
+    private ThemeInfo theme = new ThemeInfo { ButtonClass = "btn-info" };
+}
